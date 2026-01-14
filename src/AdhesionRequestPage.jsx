@@ -63,7 +63,7 @@ const AdhesionRequestPage = ({ setCurrentPage }) => {
 
     try {
       // Envoyer la demande au backend
-      const response = await fetch(`${API_URL}/users/register`, {
+      const response = await fetch(`${API_URL}/users/ajouter`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
