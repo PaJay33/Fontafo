@@ -670,14 +670,7 @@ const HomePage = ({ setCurrentPage, user }) => {
               Rejoignez notre communauté et participez à offrir un avenir meilleur aux enfants défavorisés. 
               Ensemble, nous pouvons changer des vies grâce à l'éducation.
             </p>
-            {!user && (
-              <button
-                onClick={() => setCurrentPage('adhesion')}
-                className="px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg font-bold rounded-full hover:scale-105 transition-transform duration-300 shadow-lg shadow-purple-500/50"
-              >
-                Je deviens membre
-              </button>
-            )}
+            
           </div>
         </div>
       </section>
