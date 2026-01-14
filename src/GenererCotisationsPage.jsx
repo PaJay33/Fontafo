@@ -1,11 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Zap, Users, User, CreditCard, CheckCircle, XCircle, AlertCircle, ChevronRight, DollarSign, Calendar, PlusCircle, Mail, Square, CheckSquare, Search  } from 'lucide-react';
-import { } from 'lucide-react';
-import { } from 'lucide-react';
-
-// Configuration API
-const API_URL = 'https://backafo.onrender.com';
+import { API_URL } from './api';
 
 // GenererCotisationsPage avec sélection de membres
 const GenererCotisationsPage = ({ token, setCurrentPage }) => {

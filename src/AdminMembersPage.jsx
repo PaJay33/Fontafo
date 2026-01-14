@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Activity, Users, Zap, Shield, X, User, CreditCard, Trash2, Eye, Mail, UserCircle, Phone, UserCheck, UserX, Ban, AlertTriangle, Search, CheckCircle, XCircle } from 'lucide-react';
-
-// Configuration API
-const API_URL = 'https://backafo.onrender.com';
+import { API_URL } from './api';
 
 // Page admin: Gestion des membres améliorée
 const AdminMembersPage = ({ token }) => {

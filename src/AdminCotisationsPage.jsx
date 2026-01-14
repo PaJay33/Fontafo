@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, Users, Download, X, User, CreditCard, CheckCircle, Search, BarChart,  ChevronRight, DollarSign, Clock, Calendar, Mail, FileText} from 'lucide-react';
-import { generateMonthlyReport, generateGlobalReport } from './pdfExport'; 
-// Configuration API
-const API_URL = 'https://backafo.onrender.com';
+import { generateMonthlyReport, generateGlobalReport } from './pdfExport';
+import { API_URL } from './api';
 
 const AdminCotisationsPage = ({ token }) => {
   const [members, setMembers] = useState([]);

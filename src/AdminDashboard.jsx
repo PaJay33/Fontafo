@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Users, Shield, CreditCard, Clock, AlertCircle, UserCheck, UserX, Zap, TrendingUp, Activity, BarChart,  ChevronRight, PlusCircle, Settings } from 'lucide-react';
-
-// Configuration API
-const API_URL = 'https://backafo.onrender.com';
+import { API_URL } from './api';
 
 // Dashboard admin avec stats amélioré
 const AdminDashboard = ({ user, setCurrentPage }) => {

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, CheckCircle, XCircle, AlertCircle, UserCheck, TrendingUp, Clock, Calendar, Mail, UserCog, History, Phone } from 'lucide-react';
-
-// Configuration API
-const API_URL = 'https://backafo.onrender.com';
+import { API_URL } from './api';
 
 // Dashboard membre - VERSION CORRIGÉE
 const MemberDashboard = ({ user, setCurrentPage }) => {

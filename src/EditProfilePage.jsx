@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {Shield,User, CheckCircle, XCircle, AlertCircle, ChevronRight, Mail, Lock, Info, Phone, Send, UserCircle, ShieldAlert, ShieldCheck, Key, Save, ChevronLeft, UserCog} from 'lucide-react';
-
-// Configuration API
-const API_URL = 'https://backafo.onrender.com';
+import { API_URL } from './api';
 
 // EditProfilePage avec gestion sécurisée du mot de passe
 const EditProfilePage = ({ user, token, setUser, setCurrentPage }) => {
