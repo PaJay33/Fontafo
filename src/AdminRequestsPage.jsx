@@ -10,60 +10,102 @@ const AdminRequestsPage = ({ token }) => {
   const [loading, setLoading] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [filter, setFilter] = useState('en_attente'); // en_attente, approuvé, refusé, tous
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     loadRequests();
   }, []);
 
-  const loadRequests = () => {
-    const stored = JSON.parse(localStorage.getItem('afo_requests') || '[]');
-    setRequests(stored);
-  };
-
-  const handleApprove = async (request) => {
-    setLoading(true);
+  const loadRequests = async () => {
     try {
-      const response = await fetch(`${API_URL}/users/ajouter`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...request,
-          statu: 'actif',
-          role: 'membre'
-        })
+      setLoading(true);
+      const response = await fetch(`${API_URL}/adhesion-requests/all`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-
       const data = await response.json();
-      
+
       if (data.success) {
-        const updated = requests.map(r =>
-          r.id === request.id ? { ...r, statut: 'approuvé' } : r
-        );
-        localStorage.setItem('afo_requests', JSON.stringify(updated));
-        loadRequests();
-        setSelectedRequest(null);
-        alert('✅ Membre ajouté avec succès!');
+        setRequests(data.data);
       } else {
-        alert('❌ Erreur: ' + (data.message || data.error));
+        setError('Erreur lors du chargement des demandes');
       }
-    } catch (error) {
-      alert('❌ Erreur lors de l\'approbation');
+    } catch (err) {
+      console.error('Erreur:', err);
+      setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReject = (request) => {
-    if (window.confirm(`Êtes-vous sûr de vouloir refuser la demande de ${request.prenom} ${request.nom} ?`)) {
-      const updated = requests.map(r =>
-        r.id === request.id ? { ...r, statut: 'refusé' } : r
-      );
-      localStorage.setItem('afo_requests', JSON.stringify(updated));
-      loadRequests();
-      setSelectedRequest(null);
+  const handleApprove = async (request) => {
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/adhesion-requests/${request._id}/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess('✅ Demande approuvée ! Le membre peut maintenant se connecter.');
+        loadRequests();
+        setSelectedRequest(null);
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.message || 'Erreur lors de l\'approbation');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError('Erreur de connexion au serveur');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReject = async (request) => {
+    setError('');
+    setSuccess('');
+
+    if (!window.confirm(`Êtes-vous sûr de vouloir refuser la demande de ${request.prenom} ${request.nom} ?`)) {
+      return;
+    }
+
+    const raisonRefus = prompt('Raison du refus (optionnel):');
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/adhesion-requests/${request._id}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ raisonRefus })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess('✅ Demande refusée');
+        loadRequests();
+        setSelectedRequest(null);
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.message || 'Erreur lors du refus');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError('Erreur de connexion au serveur');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,6 +126,27 @@ const AdminRequestsPage = ({ token }) => {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* Messages d'erreur et de succès */}
+        {error && (
+          <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start space-x-3 animate-shake">
+            <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-400 font-semibold text-sm">Erreur</p>
+              <p className="text-red-300/80 text-sm mt-1">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex items-start space-x-3">
+            <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-green-400 font-semibold text-sm">Succès</p>
+              <p className="text-green-300/80 text-sm mt-1">{success}</p>
+            </div>
+          </div>
+        )}
+
         {/* En-tête */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">

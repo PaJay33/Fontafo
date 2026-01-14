@@ -62,8 +62,8 @@ const AdhesionRequestPage = ({ setCurrentPage }) => {
     setLoading(true);
 
     try {
-      // Envoyer la demande au backend
-      const response = await fetch(`${API_URL}/users/ajouter`, {
+      // Envoyer la demande d'adhésion (non l'utilisateur directement)
+      const response = await fetch(`${API_URL}/adhesion-requests/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -75,9 +75,7 @@ const AdhesionRequestPage = ({ setCurrentPage }) => {
           num: formData.num,
           sexe: formData.sexe,
           mdp: formData.mdp,
-          cotisation: formData.cotisation,
-          statu: 'actif',
-          role: 'membre'
+          cotisation: formData.cotisation
         })
       });
 
