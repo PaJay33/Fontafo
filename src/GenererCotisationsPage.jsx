@@ -5,7 +5,7 @@ import { } from 'lucide-react';
 import { } from 'lucide-react';
 
 // Configuration API
-const API_URL = 'http://localhost:5002';
+const API_URL = 'https://backafo.onrender.com';
 
 // GenererCotisationsPage avec sélection de membres
 const GenererCotisationsPage = ({ token, setCurrentPage }) => {

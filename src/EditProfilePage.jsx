@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {Shield,User, CheckCircle, XCircle, AlertCircle, ChevronRight, Mail, Lock, Info, Phone, Send, UserCircle, ShieldAlert, ShieldCheck, Key, Save, ChevronLeft, UserCog} from 'lucide-react';
 
 // Configuration API
-const API_URL = 'http://localhost:5002';
+const API_URL = 'https://backafo.onrender.com';
 
 // EditProfilePage avec gestion sécurisée du mot de passe
 const EditProfilePage = ({ user, token, setUser, setCurrentPage }) => {
@@ -56,14 +56,33 @@ const EditProfilePage = ({ user, token, setUser, setCurrentPage }) => {
         setUser(updatedUser);
         localStorage.setItem('afo_user', JSON.stringify(updatedUser));
         setSuccess('✅ Profil mis à jour avec succès !');
-        
+
         setTimeout(() => {
           setCurrentPage('dashboard');
         }, 2000);
       } else {
-        setError(data.message || 'Erreur lors de la mise à jour');
+        // Gérer les erreurs de validation du backend
+        if (data.message) {
+          setError(data.message);
+        } else if (data.error) {
+          // Si l'erreur contient des détails de validation Mongoose
+          if (typeof data.error === 'object' && data.error.errors) {
+            // Extraire tous les messages d'erreur de validation
+            const errorMessages = Object.values(data.error.errors)
+              .map(err => err.message)
+              .join(', ');
+            setError(errorMessages || 'Erreur de validation');
+          } else if (typeof data.error === 'string') {
+            setError(data.error);
+          } else {
+            setError('Erreur lors de la mise à jour');
+          }
+        } else {
+          setError('Erreur lors de la mise à jour');
+        }
       }
     } catch (err) {
+      console.error('Erreur lors de la mise à jour:', err);
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);
@@ -108,9 +127,26 @@ const EditProfilePage = ({ user, token, setUser, setCurrentPage }) => {
         setPasswordData({ ancienMdp: '', nouveauMdp: '', confirmMdp: '' });
         setPasswordMode(null);
       } else {
-        setError(data.message || 'Erreur lors du changement de mot de passe');
+        // Gérer les erreurs de validation du backend
+        if (data.message) {
+          setError(data.message);
+        } else if (data.error) {
+          if (typeof data.error === 'object' && data.error.errors) {
+            const errorMessages = Object.values(data.error.errors)
+              .map(err => err.message)
+              .join(', ');
+            setError(errorMessages || 'Erreur de validation');
+          } else if (typeof data.error === 'string') {
+            setError(data.error);
+          } else {
+            setError('Erreur lors du changement de mot de passe');
+          }
+        } else {
+          setError('Erreur lors du changement de mot de passe');
+        }
       }
     } catch (err) {
+      console.error('Erreur lors du changement de mot de passe:', err);
       setError('Erreur de connexion au serveur');
     } finally {
       setLoading(false);

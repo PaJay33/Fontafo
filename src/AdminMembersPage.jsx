@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Activity, Users, Zap, Shield, X, User,  CreditCard, Trash2, Eye, Mail, UserCircle, Phone, UserCheck, UserX, Ban, AlertTriangle, Search} from 'lucide-react';
+import { Activity, Users, Zap, Shield, X, User, CreditCard, Trash2, Eye, Mail, UserCircle, Phone, UserCheck, UserX, Ban, AlertTriangle, Search, CheckCircle, XCircle } from 'lucide-react';
 
 // Configuration API
-const API_URL = 'http://localhost:5002';
+const API_URL = 'https://backafo.onrender.com';
 
 // Page admin: Gestion des membres améliorée
 const AdminMembersPage = ({ token }) => {
@@ -12,6 +12,8 @@ const AdminMembersPage = ({ token }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('tous');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -34,6 +36,9 @@ const AdminMembersPage = ({ token }) => {
   }, [fetchMembers]);
 
   const handleChangeStatus = async (memberId, newStatus) => {
+    setError('');
+    setSuccess('');
+
     try {
       const response = await fetch(`${API_URL}/users/${memberId}`, {
         method: 'PUT',
@@ -45,34 +50,60 @@ const AdminMembersPage = ({ token }) => {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
-        alert(`✅ Statut changé en "${newStatus}" avec succès`);
+        setSuccess(`✅ Statut changé en "${newStatus}" avec succès`);
         fetchMembers();
         setSelectedMember(null);
+        setTimeout(() => setSuccess(''), 3000);
       } else {
-        alert('❌ Erreur: ' + (data.message || data.error));
+        // Gérer les erreurs de validation du backend
+        if (data.message) {
+          setError(data.message);
+        } else if (data.error) {
+          if (typeof data.error === 'object' && data.error.errors) {
+            const errorMessages = Object.values(data.error.errors)
+              .map(err => err.message)
+              .join(', ');
+            setError(errorMessages || 'Erreur de validation');
+          } else if (typeof data.error === 'string') {
+            setError(data.error);
+          } else {
+            setError('Erreur lors de la modification');
+          }
+        } else {
+          setError('Erreur lors de la modification');
+        }
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('❌ Erreur lors de la modification');
+      setError('Erreur de connexion au serveur');
     }
   };
 
   const handleDelete = async (id) => {
+    setError('');
+    setSuccess('');
+
     try {
       const response = await fetch(`${API_URL}/users/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      if (response.ok) {
-        alert('✅ Membre supprimé avec succès');
+      const data = await response.json();
+
+      if (data.success || response.ok) {
+        setSuccess('✅ Membre supprimé avec succès');
         setMembers(members.filter(m => m._id !== id));
         setShowDeleteConfirm(null);
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.message || data.error || 'Erreur lors de la suppression');
       }
     } catch (error) {
-      alert('❌ Erreur lors de la suppression');
+      console.error('Erreur:', error);
+      setError('Erreur de connexion au serveur');
     }
   };
 
@@ -101,6 +132,27 @@ const AdminMembersPage = ({ token }) => {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* Messages d'erreur et de succès */}
+        {error && (
+          <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start space-x-3 animate-shake">
+            <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-400 font-semibold text-sm">Erreur</p>
+              <p className="text-red-300/80 text-sm mt-1">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-6 bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex items-start space-x-3">
+            <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-green-400 font-semibold text-sm">Succès</p>
+              <p className="text-green-300/80 text-sm mt-1">{success}</p>
+            </div>
+          </div>
+        )}
+
         {/* En-tête */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">

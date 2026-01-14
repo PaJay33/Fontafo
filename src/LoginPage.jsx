@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 import { LogIn, Heart, ShieldAlert, ShieldCheck, Key, ChevronLeft, Send, Eye, CheckCircle, XCircle, Mail, Lock, EyeOff, Info } from 'lucide-react';
 
 // Configuration API
-const API_URL = 'http://localhost:5002';
+const API_URL = 'https://backafo.onrender.com';
 
 // Page de connexion avec mot de passe oublié
 const LoginPage = ({ setCurrentPage, setUser, setToken }) => {

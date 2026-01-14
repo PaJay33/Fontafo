@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Check, X, User, CreditCard, Mail, Lock, CheckCircle, XCircle, Info, Phone, Send, UserCircle, FileText } from 'lucide-react';
 
-
+// Configuration API
+const API_URL = 'https://backafo.onrender.com';
 
 // Page de demande d'adhésion améliorée
 const AdhesionRequestPage = ({ setCurrentPage }) => {
@@ -61,29 +62,51 @@ const AdhesionRequestPage = ({ setCurrentPage }) => {
     setLoading(true);
 
     try {
-      const requests = JSON.parse(localStorage.getItem('afo_requests') || '[]');
-      
-      // Vérifier si l'email existe déjà
-      const emailExists = requests.some(req => req.email === formData.email);
-      if (emailExists) {
-        setError('Cette adresse email a déjà été utilisée pour une demande');
-        setLoading(false);
-        return;
+      // Envoyer la demande au backend
+      const response = await fetch(`${API_URL}/users/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nom: formData.nom,
+          prenom: formData.prenom,
+          email: formData.email,
+          num: formData.num,
+          sexe: formData.sexe,
+          mdp: formData.mdp,
+          cotisation: formData.cotisation,
+          statu: 'actif',
+          role: 'membre'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess(true);
+      } else {
+        // Gérer les erreurs de validation du backend
+        if (data.message) {
+          setError(data.message);
+        } else if (data.error) {
+          // Si l'erreur contient des détails de validation Mongoose
+          if (typeof data.error === 'object' && data.error.errors) {
+            // Extraire le premier message d'erreur de validation
+            const firstError = Object.values(data.error.errors)[0];
+            setError(firstError.message || 'Erreur de validation');
+          } else if (typeof data.error === 'string') {
+            setError(data.error);
+          } else {
+            setError('Erreur lors de la création du compte');
+          }
+        } else {
+          setError('Erreur lors de la création du compte');
+        }
       }
-
-      const newRequest = {
-        ...formData,
-        confirmMdp: undefined,
-        id: Date.now(),
-        dateDemande: new Date().toISOString(),
-        statut: 'en_attente'
-      };
-
-      requests.push(newRequest);
-      localStorage.setItem('afo_requests', JSON.stringify(requests));
-      setSuccess(true);
     } catch (err) {
-      setError('Erreur lors de l\'envoi de la demande');
+      console.error('Erreur lors de l\'inscription:', err);
+      setError('Erreur de connexion au serveur. Vérifiez que le backend est lancé.');
     } finally {
       setLoading(false);
     }

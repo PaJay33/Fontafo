@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { X, User, Eye, CheckCircle, XCircle, AlertCircle, Clock, Calendar, Mail, Phone, UserCircle, FileText, Search } from 'lucide-react';
+import { X, XCircle, CheckCircle, User, Eye, AlertCircle, Clock, Calendar, Mail, Phone, UserCircle, FileText, Search } from 'lucide-react';
 
 // Configuration API
-const API_URL = 'http://localhost:5002';
+const API_URL = 'https://backafo.onrender.com';
 
 // Page admin: Demandes d'adhésion améliorée
 const AdminRequestsPage = ({ token }) => {
