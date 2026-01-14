@@ -132,14 +132,14 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                   Connexion
                 </NavLink>
                 
-                {/* Bouton CTA principal */}
+                {/* Bouton CTA principal 
                 <button
                   onClick={() => setCurrentPage('adhesion')}
                   className="ml-4 px-6 py-2.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-full font-bold shadow-lg shadow-purple-500/50 hover:shadow-purple-500/70 transition-all duration-300 hover:scale-105 flex items-center space-x-2"
                 >
                   <Heart className="w-4 h-4" />
                   <span>Nous rejoindre</span>
-                </button>
+                </button>*/}
               </>
             ) : (
               <>
@@ -278,13 +278,7 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                   Connexion
                 </MobileNavLink>
 
-                <button
-                  onClick={() => { setCurrentPage('adhesion'); setIsMenuOpen(false); }}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-xl font-bold shadow-lg shadow-purple-500/50 flex items-center justify-center space-x-2"
-                >
-                  <Heart className="w-5 h-5" />
-                  <span>Nous rejoindre</span>
-                </button>
+                
               </>
             ) : (
               <>
@@ -521,17 +515,7 @@ const HomePage = ({ setCurrentPage, user }) => {
               {/* Effet de halo autour du bouton */}
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
               
-              <button
-                onClick={() => setCurrentPage('adhesion')}
-                className="relative px-10 py-5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white text-lg md:text-xl font-bold rounded-full overflow-hidden group"
-              >
-                {/* Effet de brillance au survol */}
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
-                <span className="relative flex items-center space-x-2">
-                  <Heart className="w-6 h-6 animate-pulse" />
-                  <span>Rejoindre l'aventure</span>
-                </span>
-              </button>
+              
             </div>
           )}
 
