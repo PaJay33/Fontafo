@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Activity, Users, Zap, Shield, X, User, CreditCard, Trash2, Eye, Mail, UserCircle, Phone, UserCheck, UserX, Ban, AlertTriangle, Search, CheckCircle, XCircle } from 'lucide-react';
+import { Activity, Users, Zap, Shield, X, User, CreditCard, Trash2, Eye, Mail, UserCircle, Phone, UserCheck, UserX, Ban, AlertTriangle, Search, CheckCircle, XCircle, Plus, Lock } from 'lucide-react';
 import { API_URL } from './api';
 
 // Page admin: Gestion des membres améliorée
@@ -12,6 +12,21 @@ const AdminMembersPage = ({ token }) => {
   const [filterStatus, setFilterStatus] = useState('tous');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+
+  // État pour le formulaire d'ajout
+  const [newMember, setNewMember] = useState({
+    nom: '',
+    prenom: '',
+    email: '',
+    num: '',
+    sexe: 'Male',
+    mdp: '',
+    confirmMdp: '',
+    role: 'membre',
+    cotisation: 'mensuel',
+    statu: 'actif'
+  });
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -105,6 +120,96 @@ const AdminMembersPage = ({ token }) => {
     }
   };
 
+  const handleAddMember = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    // Validation des mots de passe
+    if (newMember.mdp !== newMember.confirmMdp) {
+      setError('Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    if (newMember.mdp.length < 8) {
+      setError('Le mot de passe doit contenir au moins 8 caractères');
+      return;
+    }
+
+    try {
+      const memberData = {
+        nom: newMember.nom,
+        prenom: newMember.prenom,
+        email: newMember.email,
+        num: newMember.num,
+        sexe: newMember.sexe,
+        mdp: newMember.mdp,
+        role: newMember.role,
+        cotisation: newMember.cotisation,
+        statu: newMember.statu
+      };
+
+      console.log('Envoi des données:', memberData);
+      console.log('URL:', `${API_URL}/users/ajouter`);
+
+      const response = await fetch(`${API_URL}/users/ajouter`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(memberData)
+      });
+
+      console.log('Réponse status:', response.status);
+      const data = await response.json();
+      console.log('Réponse data:', data);
+
+      if (data.success) {
+        setSuccess('✅ Membre ajouté avec succès');
+        fetchMembers();
+        setShowAddMemberModal(false);
+        // Réinitialiser le formulaire
+        setNewMember({
+          nom: '',
+          prenom: '',
+          email: '',
+          num: '',
+          sexe: 'Male',
+          mdp: '',
+          confirmMdp: '',
+          role: 'membre',
+          cotisation: 'mensuel',
+          statu: 'actif'
+        });
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        // Afficher tous les détails de l'erreur
+        console.error('Erreur complète:', data);
+
+        if (data.message) {
+          setError(data.message);
+        } else if (data.error) {
+          if (typeof data.error === 'object' && data.error.errors) {
+            const errorMessages = Object.values(data.error.errors)
+              .map(err => err.message)
+              .join(', ');
+            setError(errorMessages || 'Erreur de validation');
+          } else if (typeof data.error === 'string') {
+            setError(data.error);
+          } else {
+            setError(JSON.stringify(data.error));
+          }
+        } else {
+          setError('Erreur lors de l\'ajout du membre: ' + JSON.stringify(data));
+        }
+      }
+    } catch (error) {
+      console.error('Erreur catch:', error);
+      setError('Erreur de connexion au serveur: ' + error.message);
+    }
+  };
+
   // Filtrer les membres
   const filteredMembers = members.filter(member => {
     const matchSearch = searchTerm === '' || 
@@ -163,6 +268,13 @@ const AdminMembersPage = ({ token }) => {
                 <p className="text-gray-400">{members.length} membre(s) au total</p>
               </div>
             </div>
+            <button
+              onClick={() => setShowAddMemberModal(true)}
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:scale-105 transition-transform font-bold flex items-center space-x-2 shadow-lg shadow-green-500/50"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Ajouter un membre</span>
+            </button>
           </div>
 
           {/* Statistiques */}
@@ -419,6 +531,212 @@ const AdminMembersPage = ({ token }) => {
                 >
                   Supprimer
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal d'ajout de membre */}
+        {showAddMemberModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 overflow-y-auto animate-fadeIn">
+            <div className="min-h-screen flex items-center justify-center p-4">
+              <div className="bg-slate-900 rounded-3xl max-w-3xl w-full my-8 border border-green-500/30 shadow-2xl animate-scaleIn">
+              <div className="p-6 border-b border-slate-700 bg-gradient-to-r from-green-500/10 to-emerald-500/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                      <Plus className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white">Ajouter un nouveau membre</h3>
+                      <p className="text-gray-400 text-sm">Remplissez les informations du membre</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowAddMemberModal(false)}
+                    className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-lg"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleAddMember} className="p-6">
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  {/* Nom */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Nom <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newMember.nom}
+                      onChange={(e) => setNewMember({ ...newMember, nom: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                      placeholder="Diop"
+                    />
+                  </div>
+
+                  {/* Prénom */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Prénom <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newMember.prenom}
+                      onChange={(e) => setNewMember({ ...newMember, prenom: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                      placeholder="Moussa"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Email <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={newMember.email}
+                      onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                      placeholder="exemple@email.com"
+                    />
+                  </div>
+
+                  {/* Téléphone */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Téléphone <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={newMember.num}
+                      onChange={(e) => setNewMember({ ...newMember, num: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                      placeholder="771234567"
+                    />
+                  </div>
+
+                  {/* Sexe */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Sexe <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      value={newMember.sexe}
+                      onChange={(e) => setNewMember({ ...newMember, sexe: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                    >
+                      <option value="Male">Homme</option>
+                      <option value="Female">Femme</option>
+                    </select>
+                  </div>
+
+                  {/* Rôle */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Rôle <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      value={newMember.role}
+                      onChange={(e) => setNewMember({ ...newMember, role: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                    >
+                      <option value="membre">Membre</option>
+                      <option value="bureau">Bureau</option>
+                      <option value="Admin">Admin</option>
+                    </select>
+                  </div>
+
+                  {/* Type de cotisation */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Type de cotisation <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      value={newMember.cotisation}
+                      onChange={(e) => setNewMember({ ...newMember, cotisation: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                    >
+                      <option value="mensuel">Mensuel (3000 FCFA)</option>
+                      <option value="trimestriel">Trimestriel (9000 FCFA)</option>
+                    </select>
+                  </div>
+
+                  {/* Statut */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2">
+                      Statut <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      value={newMember.statu}
+                      onChange={(e) => setNewMember({ ...newMember, statu: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                    >
+                      <option value="actif">Actif</option>
+                      <option value="suspendu">Suspendu</option>
+                      <option value="bani">Banni</option>
+                    </select>
+                  </div>
+
+                  {/* Mot de passe */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2 flex items-center space-x-2">
+                      <Lock className="w-4 h-4" />
+                      <span>Mot de passe <span className="text-red-400">*</span></span>
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={newMember.mdp}
+                      onChange={(e) => setNewMember({ ...newMember, mdp: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                      placeholder="Minimum 8 caractères"
+                      minLength="8"
+                    />
+                  </div>
+
+                  {/* Confirmation mot de passe */}
+                  <div>
+                    <label className="block text-gray-300 font-semibold mb-2 flex items-center space-x-2">
+                      <Lock className="w-4 h-4" />
+                      <span>Confirmer mot de passe <span className="text-red-400">*</span></span>
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={newMember.confirmMdp}
+                      onChange={(e) => setNewMember({ ...newMember, confirmMdp: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-800 text-white rounded-lg border border-slate-700 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all"
+                      placeholder="Répétez le mot de passe"
+                      minLength="8"
+                    />
+                  </div>
+                </div>
+
+                {/* Boutons d'action */}
+                <div className="flex space-x-4 pt-4 border-t border-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddMemberModal(false)}
+                    className="flex-1 px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors font-semibold"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:scale-105 transition-transform font-semibold shadow-lg shadow-green-500/30"
+                  >
+                    Ajouter le membre
+                  </button>
+                </div>
+              </form>
               </div>
             </div>
           </div>

@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Heart, Shield, BookOpen, Menu, X, User, LogOut, CreditCard, AlertCircle, Home, 
-    LogIn,LayoutDashboard, PlusCircle, ChevronDown, GraduationCap, Pencil, Backpack, School, 
+import { Users, Heart, Shield, BookOpen, Menu, X, User, LogOut, CreditCard, Home,
+    LogIn, LayoutDashboard, PlusCircle, ChevronDown, GraduationCap, Pencil, Backpack, School,
     Calculator, TrendingUp  } from 'lucide-react';
 
 
 
 import LoginPage from './LoginPage';
-import AdhesionRequestPage from './AdhesionRequestPage';
 import DashboardPage from './DashboardPage';
 import AdminMembersPage from './AdminMembersPage';
-import AdminRequestsPage from './AdminRequestsPage';
 import AdminCotisationsPage from './AdminCotisationsPage';
 import GenererCotisationsPage from './GenererCotisationsPage';
 import EditProfilePage from './EditProfilePage';
@@ -60,10 +58,8 @@ const Acceuil = () => {
       <main>
         {currentPage === 'home' && <HomePage setCurrentPage={setCurrentPage} user={user} />}
         {currentPage === 'login' && <LoginPage setCurrentPage={setCurrentPage} setUser={setUser} setToken={setToken} />}
-        {currentPage === 'adhesion' && <AdhesionRequestPage setCurrentPage={setCurrentPage} />}
         {currentPage === 'dashboard' && user && <DashboardPage user={user} token={token} setCurrentPage={setCurrentPage} />}
         {currentPage === 'members' && user?.role === 'Admin' && <AdminMembersPage token={token} />}
-        {currentPage === 'requests' && user?.role === 'Admin' && <AdminRequestsPage token={token} />}
         {currentPage === 'cotisations' && user?.role === 'Admin' && <AdminCotisationsPage token={token} />}
         {currentPage === 'generer-cotisations' && user?.role === 'Admin' && <GenererCotisationsPage token={token} setCurrentPage={setCurrentPage} />}
         {currentPage === 'edit-profile' && user && (<EditProfilePage user={user} token={token} setUser={setUser} setCurrentPage={setCurrentPage} />)}
@@ -76,8 +72,6 @@ const Acceuil = () => {
 
 // Navigation améliorée
 const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, user, logout }) => {
-  const requests = JSON.parse(localStorage.getItem('afo_requests') || '[]');
-  const pendingCount = requests.filter(r => r.statut === 'en_attente').length;
 
   return (
     <nav className="bg-slate-900/95 backdrop-blur-md border-b border-blue-800/30 sticky top-0 z-50 shadow-lg shadow-black/10">
@@ -167,48 +161,32 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                 {/* Menu Admin */}
                 {user.role === 'Admin' && (
                   <>
-                    <NavLink 
-                      onClick={() => setCurrentPage('dashboard')} 
+                    <NavLink
+                      onClick={() => setCurrentPage('dashboard')}
                       active={currentPage === 'dashboard'}
                       icon={<LayoutDashboard className="w-4 h-4" />}
                     >
                       Tableau de bord
                     </NavLink>
 
-                    {/* Demandes avec badge */}
-                    <div className="relative">
-                      <NavLink 
-                        onClick={() => setCurrentPage('requests')} 
-                        active={currentPage === 'requests'}
-                        icon={<AlertCircle className="w-4 h-4" />}
-                      >
-                        Demandes
-                      </NavLink>
-                      {pendingCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse shadow-lg shadow-red-500/50">
-                          {pendingCount}
-                        </span>
-                      )}
-                    </div>
-
-                    <NavLink 
-                      onClick={() => setCurrentPage('members')} 
+                    <NavLink
+                      onClick={() => setCurrentPage('members')}
                       active={currentPage === 'members'}
                       icon={<Users className="w-4 h-4" />}
                     >
                       Membres
                     </NavLink>
 
-                    <NavLink 
-                      onClick={() => setCurrentPage('cotisations')} 
+                    <NavLink
+                      onClick={() => setCurrentPage('cotisations')}
                       active={currentPage === 'cotisations'}
                       icon={<CreditCard className="w-4 h-4" />}
                     >
                       Cotisations
                     </NavLink>
 
-                    <NavLink 
-                      onClick={() => setCurrentPage('generer-cotisations')} 
+                    <NavLink
+                      onClick={() => setCurrentPage('generer-cotisations')}
                       active={currentPage === 'generer-cotisations'}
                       icon={<PlusCircle className="w-4 h-4" />}
                     >
@@ -317,41 +295,32 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                   </>
                 ) : (
                   <>
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('dashboard'); setIsMenuOpen(false); }} 
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('dashboard'); setIsMenuOpen(false); }}
                       active={currentPage === 'dashboard'}
                       icon={<LayoutDashboard className="w-5 h-5" />}
                     >
                       Tableau de bord
                     </MobileNavLink>
 
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('requests'); setIsMenuOpen(false); }} 
-                      active={currentPage === 'requests'}
-                      icon={<AlertCircle className="w-5 h-5" />}
-                      badge={pendingCount}
-                    >
-                      Demandes
-                    </MobileNavLink>
-
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('members'); setIsMenuOpen(false); }} 
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('members'); setIsMenuOpen(false); }}
                       active={currentPage === 'members'}
                       icon={<Users className="w-5 h-5" />}
                     >
                       Membres
                     </MobileNavLink>
 
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('cotisations'); setIsMenuOpen(false); }} 
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('cotisations'); setIsMenuOpen(false); }}
                       active={currentPage === 'cotisations'}
                       icon={<CreditCard className="w-5 h-5" />}
                     >
                       Cotisations
                     </MobileNavLink>
 
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('generer-cotisations'); setIsMenuOpen(false); }} 
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('generer-cotisations'); setIsMenuOpen(false); }}
                       active={currentPage === 'generer-cotisations'}
                       icon={<PlusCircle className="w-5 h-5" />}
                     >

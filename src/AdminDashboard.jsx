@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Users, Shield, CreditCard, Clock, AlertCircle, UserCheck, UserX, Zap, TrendingUp, Activity, BarChart,  ChevronRight, PlusCircle, Settings } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Users, Shield, CreditCard, UserCheck, UserX, Zap, AlertCircle, TrendingUp, Activity, BarChart, ChevronRight, PlusCircle, Settings, Ban } from 'lucide-react';
 import { API_URL } from './api';
 
 // Dashboard admin avec stats amélioré
 const AdminDashboard = ({ user, setCurrentPage }) => {
-  const [stats, setStats] = useState({ total: 0, actifs: 0, suspendus: 0, demandes: 0 });
+  const [stats, setStats] = useState({ total: 0, actifs: 0, suspendus: 0, bannis: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,16 +18,15 @@ const AdminDashboard = ({ user, setCurrentPage }) => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
-      
+
       if (data.success) {
         const members = data.data;
-        const requests = JSON.parse(localStorage.getItem('afo_requests') || '[]');
-        
+
         setStats({
           total: members.length,
           actifs: members.filter(m => m.statu === 'actif').length,
           suspendus: members.filter(m => m.statu === 'suspendu').length,
-          demandes: requests.filter(r => r.statut === 'en_attente').length
+          bannis: members.filter(m => m.statu === 'bani').length
         });
       }
     } catch (error) {
@@ -76,36 +75,36 @@ const AdminDashboard = ({ user, setCurrentPage }) => {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <AdminStatCard 
-              icon={<Users />} 
-              title="Total membres" 
-              value={stats.total} 
+            <AdminStatCard
+              icon={<Users />}
+              title="Total membres"
+              value={stats.total}
               gradient="from-blue-500 to-cyan-500"
               description="Membres enregistrés"
             />
-            <AdminStatCard 
-              icon={<UserCheck />} 
-              title="Membres actifs" 
-              value={stats.actifs} 
+            <AdminStatCard
+              icon={<UserCheck />}
+              title="Membres actifs"
+              value={stats.actifs}
               gradient="from-green-500 to-emerald-500"
               description="Comptes actifs"
               badge={true}
             />
-            <AdminStatCard 
-              icon={<UserX />} 
-              title="Suspendus" 
-              value={stats.suspendus} 
+            <AdminStatCard
+              icon={<UserX />}
+              title="Suspendus"
+              value={stats.suspendus}
               gradient="from-amber-500 to-orange-500"
               description="Comptes suspendus"
               alert={stats.suspendus > 0}
             />
-            <AdminStatCard 
-              icon={<AlertCircle />} 
-              title="Demandes" 
-              value={stats.demandes} 
+            <AdminStatCard
+              icon={<UserX />}
+              title="Bannis"
+              value={stats.bannis}
               gradient="from-red-500 to-pink-500"
-              description="En attente"
-              pulse={stats.demandes > 0}
+              description="Comptes bannis"
+              alert={stats.bannis > 0}
             />
           </div>
         )}
@@ -119,17 +118,9 @@ const AdminDashboard = ({ user, setCurrentPage }) => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <QuickActionCard
-              icon={<AlertCircle />}
-              title="Gérer les demandes"
-              description="Approuver ou refuser les demandes d'adhésion"
-              gradient="from-blue-500 to-cyan-500"
-              onClick={() => setCurrentPage('requests')}
-              badge={stats.demandes}
-            />
-            <QuickActionCard
               icon={<Users />}
               title="Gérer les membres"
-              description="Voir, suspendre ou bannir des membres"
+              description="Ajouter, modifier ou supprimer des membres"
               gradient="from-purple-500 to-pink-500"
               onClick={() => setCurrentPage('members')}
             />
@@ -188,57 +179,57 @@ const AdminDashboard = ({ user, setCurrentPage }) => {
                 {stats.total > 0 ? Math.round((stats.actifs / stats.total) * 100) : 0}%
               </p>
               <p className="text-gray-500 text-sm">Membres actifs sur le total</p>
-              
+
               {/* Barre de progression */}
               <div className="mt-4 h-2 bg-slate-700 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-1000"
                   style={{ width: `${stats.total > 0 ? Math.round((stats.actifs / stats.total) * 100) : 0}%` }}
                 ></div>
               </div>
             </div>
 
-            {/* À traiter */}
-            <div className="group bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-orange-500/50 transition-all">
+            {/* Membres suspendus */}
+            <div className="group bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-amber-500/50 transition-all">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-gray-400 text-sm font-medium">À traiter</p>
-                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Clock className="w-5 h-5 text-orange-400" />
+                <p className="text-gray-400 text-sm font-medium">Membres suspendus</p>
+                <div className="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <UserX className="w-5 h-5 text-amber-400" />
                 </div>
               </div>
-              <p className="text-4xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-2">
-                {stats.demandes}
+              <p className="text-4xl font-black bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent mb-2">
+                {stats.suspendus}
               </p>
-              <p className="text-gray-500 text-sm">Demandes en attente</p>
+              <p className="text-gray-500 text-sm">Comptes temporairement suspendus</p>
 
-              {stats.demandes > 0 && (
+              {stats.suspendus > 0 && (
                 <button
-                  onClick={() => setCurrentPage('requests')}
-                  className="mt-4 w-full px-4 py-2 bg-orange-500/20 border border-orange-500/30 text-orange-300 hover:bg-orange-500/30 rounded-lg transition-all text-sm font-semibold"
+                  onClick={() => setCurrentPage('members')}
+                  className="mt-4 w-full px-4 py-2 bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 rounded-lg transition-all text-sm font-semibold"
                 >
-                  Traiter maintenant
+                  Gérer les suspensions
                 </button>
               )}
             </div>
 
-            {/* Croissance */}
-            <div className="group bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-blue-500/50 transition-all">
+            {/* Membres bannis */}
+            <div className="group bg-slate-800/50 rounded-xl p-6 border border-slate-700 hover:border-red-500/50 transition-all">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-gray-400 text-sm font-medium">Nouvelles demandes</p>
-                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <BarChart className="w-5 h-5 text-blue-400" />
+                <p className="text-gray-400 text-sm font-medium">Membres bannis</p>
+                <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <UserX className="w-5 h-5 text-red-400" />
                 </div>
               </div>
-              <p className="text-4xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-                +{stats.demandes}
+              <p className="text-4xl font-black bg-gradient-to-r from-red-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                {stats.bannis}
               </p>
-              <p className="text-gray-500 text-sm">Demandes ce mois-ci</p>
+              <p className="text-gray-500 text-sm">Comptes bannis définitivement</p>
 
               <div className="mt-4 flex items-center space-x-2 text-sm">
                 <div className="flex-1 h-1 bg-slate-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 animate-pulse" style={{ width: '70%' }}></div>
+                  <div className="h-full bg-gradient-to-r from-red-500 to-pink-500" style={{ width: `${stats.total > 0 ? Math.round((stats.bannis / stats.total) * 100) : 0}%` }}></div>
                 </div>
-                <span className="text-blue-400 font-semibold">70%</span>
+                <span className="text-red-400 font-semibold">{stats.total > 0 ? Math.round((stats.bannis / stats.total) * 100) : 0}%</span>
               </div>
             </div>
           </div>
