@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, CheckCircle, XCircle, AlertCircle, UserCheck, TrendingUp, Clock, Calendar, Mail, UserCog, History, Phone } from 'lucide-react';
 import { API_URL } from './api';
 
@@ -9,6 +9,7 @@ const MemberDashboard = ({ user, setCurrentPage }) => {
 
   useEffect(() => {
     loadCotisations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadCotisations = async () => {

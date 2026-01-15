@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard, TrendingUp, Users, DollarSign, Activity, ChevronRight, PlusCircle, BarChart, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CreditCard, TrendingUp, DollarSign, Activity, ChevronRight, PlusCircle, BarChart, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { API_URL } from './api';
 
 // Dashboard Finance - Accès uniquement aux cotisations

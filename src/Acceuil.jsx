@@ -14,12 +14,6 @@ import EditProfilePage from './EditProfilePage';
 import HistoriquePage from './HistoriquePage';
 import Footer from './Footer';
 
-
-
-
-// Configuration API
-const API_URL = 'http://localhost:5002';
-
 // Composant principal
 const Acceuil = () => {
   const [currentPage, setCurrentPage] = useState('home');

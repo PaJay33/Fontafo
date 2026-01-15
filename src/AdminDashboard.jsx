@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Shield, CreditCard, UserCheck, UserX, Zap, AlertCircle, TrendingUp, Activity, BarChart, ChevronRight, PlusCircle, Settings, Ban } from 'lucide-react';
+import { Users, Shield, CreditCard, UserCheck, UserX, Zap, AlertCircle, TrendingUp, Activity, BarChart, ChevronRight, PlusCircle, Settings } from 'lucide-react';
 import { API_URL } from './api';
 
 // Dashboard admin avec stats amélioré

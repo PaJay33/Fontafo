@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Zap, Users, User, CreditCard, CheckCircle, XCircle, AlertCircle, ChevronRight, DollarSign, Calendar, PlusCircle, Mail, Square, CheckSquare, Search  } from 'lucide-react';
 import { API_URL } from './api';
 
@@ -20,6 +20,7 @@ const GenererCotisationsPage = ({ token, setCurrentPage }) => {
   // Charger les membres au montage
   useEffect(() => {
     loadMembers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadMembers = async () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { History, User, CreditCard, Filter, Calendar, Download, Search, ChevronDown, TrendingUp, Activity, AlertCircle, CheckCircle, XCircle, UserPlus, UserMinus, UserCheck, Ban, DollarSign } from 'lucide-react';
+import { History, User, CreditCard, Filter, Search, TrendingUp, Activity, AlertCircle, CheckCircle, XCircle, UserPlus, UserMinus, UserCheck, Ban, DollarSign } from 'lucide-react';
 import { API_URL } from './api';
 
 const HistoriquePage = ({ token }) => {
@@ -17,6 +17,7 @@ const HistoriquePage = ({ token }) => {
   useEffect(() => {
     fetchLogs();
     fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterAction, filterType, startDate, endDate, currentPage]);
 
   const fetchLogs = async () => {
