@@ -145,7 +145,7 @@ const AdminCotisationsPage = ({ token }) => {
   const montantTotal = cotisations.filter(c => c.statut === 'payé').reduce((sum, c) => sum + c.montant, 0);
 
   return (
-    <div className="min-h-screen py-16 px-4 relative overflow-hidden">
+    <div className="min-h-screen py-8 md:py-16 px-3 md:px-4 relative overflow-hidden">
       {/* Arrière-plan animé */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -154,26 +154,26 @@ const AdminCotisationsPage = ({ token }) => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* En-tête */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/50">
-                <CreditCard className="w-6 h-6 text-white" />
+        <div className="mb-4 md:mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-green-500/50">
+                <CreditCard className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-4xl font-black text-white">Gestion des Cotisations</h2>
-                <p className="text-gray-400">Vue d'ensemble et suivi des paiements</p>
+                <h2 className="text-xl md:text-4xl font-black text-white">Gestion Cotisations</h2>
+                <p className="text-xs md:text-base text-gray-400">Vue d'ensemble et suivi</p>
               </div>
             </div>
 
             {/* Toggle entre vue globale et vue membre */}
-            <div className="flex space-x-2 bg-slate-800 rounded-xl p-1">
+            <div className="flex space-x-1 md:space-x-2 bg-slate-800 rounded-lg md:rounded-xl p-1">
               <button
                 onClick={() => {
                   setViewMode('global');
                   setSelectedMember(null);
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all flex items-center space-x-2 ${
+                className={`px-3 md:px-4 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all flex items-center space-x-1 md:space-x-2 ${
                   viewMode === 'global'
                     ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
                     : 'text-gray-400 hover:text-white'
@@ -184,7 +184,7 @@ const AdminCotisationsPage = ({ token }) => {
               </button>
               <button
                 onClick={() => setViewMode('member')}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all flex items-center space-x-2 ${
+                className={`px-3 md:px-4 py-2 rounded-lg font-semibold text-xs md:text-sm transition-all flex items-center space-x-1 md:space-x-2 ${
                   viewMode === 'member'
                     ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
                     : 'text-gray-400 hover:text-white'
