@@ -99,12 +99,17 @@ const AdminMembersPage = ({ token }) => {
     setSuccess('');
 
     try {
+      console.log('Suppression du membre ID:', id);
+
       const response = await fetch(`${API_URL}/users/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
+      console.log('Réponse suppression status:', response.status);
+
       const data = await response.json();
+      console.log('Réponse suppression data:', data);
 
       if (data.success || response.ok) {
         setSuccess('✅ Membre supprimé avec succès');
@@ -112,11 +117,12 @@ const AdminMembersPage = ({ token }) => {
         setShowDeleteConfirm(null);
         setTimeout(() => setSuccess(''), 3000);
       } else {
+        console.error('Erreur de suppression:', data);
         setError(data.message || data.error || 'Erreur lors de la suppression');
       }
     } catch (error) {
-      console.error('Erreur:', error);
-      setError('Erreur de connexion au serveur');
+      console.error('Erreur catch suppression:', error);
+      setError('Erreur de connexion au serveur: ' + error.message);
     }
   };
 
