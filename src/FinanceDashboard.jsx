@@ -28,8 +28,8 @@ const FinanceDashboard = ({ user, setCurrentPage }) => {
 
       if (data.success) {
         const cotisations = data.data;
-        const payees = cotisations.filter(c => c.statut === 'payée');
-        const nonPayees = cotisations.filter(c => c.statut === 'non payée');
+        const payees = cotisations.filter(c => c.statut === 'payé');
+        const nonPayees = cotisations.filter(c => c.statut === 'en_attente' || c.statut === 'en_retard');
 
         const montantTotal = cotisations.reduce((sum, c) => sum + c.montant, 0);
         const montantCollecte = payees.reduce((sum, c) => sum + c.montant, 0);
