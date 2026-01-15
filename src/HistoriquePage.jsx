@@ -128,24 +128,24 @@ const HistoriquePage = ({ token }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 py-4 md:py-8 px-3 md:px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
-              <History className="w-7 h-7 text-white" />
+        <div className="mb-4 md:mb-8">
+          <div className="flex items-center space-x-2 md:space-x-4 mb-3 md:mb-4">
+            <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
+              <History className="w-5 h-5 md:w-7 md:h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-black text-white">Historique des actions</h1>
-              <p className="text-gray-400">Traçabilité complète des opérations Admin et Finance</p>
+              <h1 className="text-xl md:text-4xl font-black text-white">Historique des actions</h1>
+              <p className="text-xs md:text-base text-gray-400">Traçabilité complète des opérations</p>
             </div>
           </div>
         </div>
 
         {/* Statistiques */}
         {stats && (
-          <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
             <div className="bg-slate-800/50 rounded-xl p-4 border border-purple-500/30">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-400 text-sm">Total actions</span>
