@@ -656,6 +656,7 @@ const AdminMembersPage = ({ token }) => {
                     >
                       <option value="membre">Membre</option>
                       <option value="bureau">Bureau</option>
+                      <option value="finance">Finance</option>
                       <option value="Admin">Admin</option>
                     </select>
                   </div>

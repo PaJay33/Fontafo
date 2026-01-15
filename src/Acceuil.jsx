@@ -60,8 +60,8 @@ const Acceuil = () => {
         {currentPage === 'login' && <LoginPage setCurrentPage={setCurrentPage} setUser={setUser} setToken={setToken} />}
         {currentPage === 'dashboard' && user && <DashboardPage user={user} token={token} setCurrentPage={setCurrentPage} />}
         {currentPage === 'members' && user?.role === 'Admin' && <AdminMembersPage token={token} />}
-        {currentPage === 'cotisations' && user?.role === 'Admin' && <AdminCotisationsPage token={token} />}
-        {currentPage === 'generer-cotisations' && user?.role === 'Admin' && <GenererCotisationsPage token={token} setCurrentPage={setCurrentPage} />}
+        {currentPage === 'cotisations' && (user?.role === 'Admin' || user?.role === 'finance') && <AdminCotisationsPage token={token} />}
+        {currentPage === 'generer-cotisations' && (user?.role === 'Admin' || user?.role === 'finance') && <GenererCotisationsPage token={token} setCurrentPage={setCurrentPage} />}
         {currentPage === 'edit-profile' && user && (<EditProfilePage user={user} token={token} setUser={setUser} setCurrentPage={setCurrentPage} />)}
       </main>
 
@@ -138,18 +138,18 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
             ) : (
               <>
                 {/* Menu membre simple */}
-                {user.role !== 'Admin' && (
+                {(user.role !== 'Admin' && user.role !== 'finance') && (
                   <>
-                    <NavLink 
-                      onClick={() => setCurrentPage('dashboard')} 
+                    <NavLink
+                      onClick={() => setCurrentPage('dashboard')}
                       active={currentPage === 'dashboard'}
                       icon={<User className="w-4 h-4" />}
                     >
                       Mon Espace
                     </NavLink>
-                    
-                    <NavLink 
-                      onClick={() => setCurrentPage('mes-cotisations')} 
+
+                    <NavLink
+                      onClick={() => setCurrentPage('mes-cotisations')}
                       active={currentPage === 'mes-cotisations'}
                       icon={<CreditCard className="w-4 h-4" />}
                     >
@@ -175,6 +175,35 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                       icon={<Users className="w-4 h-4" />}
                     >
                       Membres
+                    </NavLink>
+
+                    <NavLink
+                      onClick={() => setCurrentPage('cotisations')}
+                      active={currentPage === 'cotisations'}
+                      icon={<CreditCard className="w-4 h-4" />}
+                    >
+                      Cotisations
+                    </NavLink>
+
+                    <NavLink
+                      onClick={() => setCurrentPage('generer-cotisations')}
+                      active={currentPage === 'generer-cotisations'}
+                      icon={<PlusCircle className="w-4 h-4" />}
+                    >
+                      Générer
+                    </NavLink>
+                  </>
+                )}
+
+                {/* Menu Finance */}
+                {user.role === 'finance' && (
+                  <>
+                    <NavLink
+                      onClick={() => setCurrentPage('dashboard')}
+                      active={currentPage === 'dashboard'}
+                      icon={<LayoutDashboard className="w-4 h-4" />}
+                    >
+                      Tableau de bord
                     </NavLink>
 
                     <NavLink
@@ -269,31 +298,13 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                     <div>
                       <p className="text-white font-semibold">{user.prenom} {user.nom}</p>
                       <p className="text-blue-400 text-sm">
-                        {user.role === 'Admin' ? 'Administrateur' : 'Membre'}
+                        {user.role === 'Admin' ? 'Administrateur' : user.role === 'finance' ? 'Finance' : 'Membre'}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {user.role !== 'Admin' ? (
-                  <>
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('dashboard'); setIsMenuOpen(false); }} 
-                      active={currentPage === 'dashboard'}
-                      icon={<User className="w-5 h-5" />}
-                    >
-                      Mon Espace
-                    </MobileNavLink>
-                    
-                    <MobileNavLink 
-                      onClick={() => { setCurrentPage('mes-cotisations'); setIsMenuOpen(false); }} 
-                      active={currentPage === 'mes-cotisations'}
-                      icon={<CreditCard className="w-5 h-5" />}
-                    >
-                      Mes Cotisations
-                    </MobileNavLink>
-                  </>
-                ) : (
+                {user.role === 'Admin' ? (
                   <>
                     <MobileNavLink
                       onClick={() => { setCurrentPage('dashboard'); setIsMenuOpen(false); }}
@@ -325,6 +336,50 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                       icon={<PlusCircle className="w-5 h-5" />}
                     >
                       Générer cotisations
+                    </MobileNavLink>
+                  </>
+                ) : user.role === 'finance' ? (
+                  <>
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('dashboard'); setIsMenuOpen(false); }}
+                      active={currentPage === 'dashboard'}
+                      icon={<LayoutDashboard className="w-5 h-5" />}
+                    >
+                      Tableau de bord
+                    </MobileNavLink>
+
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('cotisations'); setIsMenuOpen(false); }}
+                      active={currentPage === 'cotisations'}
+                      icon={<CreditCard className="w-5 h-5" />}
+                    >
+                      Cotisations
+                    </MobileNavLink>
+
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('generer-cotisations'); setIsMenuOpen(false); }}
+                      active={currentPage === 'generer-cotisations'}
+                      icon={<PlusCircle className="w-5 h-5" />}
+                    >
+                      Générer
+                    </MobileNavLink>
+                  </>
+                ) : (
+                  <>
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('dashboard'); setIsMenuOpen(false); }}
+                      active={currentPage === 'dashboard'}
+                      icon={<User className="w-5 h-5" />}
+                    >
+                      Mon Espace
+                    </MobileNavLink>
+
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('mes-cotisations'); setIsMenuOpen(false); }}
+                      active={currentPage === 'mes-cotisations'}
+                      icon={<CreditCard className="w-5 h-5" />}
+                    >
+                      Mes Cotisations
                     </MobileNavLink>
                   </>
                 )}
