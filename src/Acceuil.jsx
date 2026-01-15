@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Heart, Shield, BookOpen, Menu, X, User, LogOut, CreditCard, Home,
     LogIn, LayoutDashboard, PlusCircle, ChevronDown, GraduationCap, Pencil, Backpack, School,
-    Calculator, TrendingUp  } from 'lucide-react';
+    Calculator, TrendingUp, History  } from 'lucide-react';
 
 
 
@@ -11,6 +11,7 @@ import AdminMembersPage from './AdminMembersPage';
 import AdminCotisationsPage from './AdminCotisationsPage';
 import GenererCotisationsPage from './GenererCotisationsPage';
 import EditProfilePage from './EditProfilePage';
+import HistoriquePage from './HistoriquePage';
 import Footer from './Footer';
 
 
@@ -62,6 +63,7 @@ const Acceuil = () => {
         {currentPage === 'members' && user?.role === 'Admin' && <AdminMembersPage token={token} />}
         {currentPage === 'cotisations' && (user?.role === 'Admin' || user?.role === 'finance') && <AdminCotisationsPage token={token} />}
         {currentPage === 'generer-cotisations' && (user?.role === 'Admin' || user?.role === 'finance') && <GenererCotisationsPage token={token} setCurrentPage={setCurrentPage} />}
+        {currentPage === 'historique' && user?.role === 'Admin' && <HistoriquePage token={token} />}
         {currentPage === 'edit-profile' && user && (<EditProfilePage user={user} token={token} setUser={setUser} setCurrentPage={setCurrentPage} />)}
       </main>
 
@@ -191,6 +193,14 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                       icon={<PlusCircle className="w-4 h-4" />}
                     >
                       Générer
+                    </NavLink>
+
+                    <NavLink
+                      onClick={() => setCurrentPage('historique')}
+                      active={currentPage === 'historique'}
+                      icon={<History className="w-4 h-4" />}
+                    >
+                      Historique
                     </NavLink>
                   </>
                 )}
@@ -336,6 +346,14 @@ const Navigation = ({ currentPage, setCurrentPage, isMenuOpen, setIsMenuOpen, us
                       icon={<PlusCircle className="w-5 h-5" />}
                     >
                       Générer cotisations
+                    </MobileNavLink>
+
+                    <MobileNavLink
+                      onClick={() => { setCurrentPage('historique'); setIsMenuOpen(false); }}
+                      active={currentPage === 'historique'}
+                      icon={<History className="w-5 h-5" />}
+                    >
+                      Historique
                     </MobileNavLink>
                   </>
                 ) : user.role === 'finance' ? (
