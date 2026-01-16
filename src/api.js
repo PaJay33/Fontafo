@@ -8,8 +8,12 @@ const getApiUrl = () => {
   // Sinon, détecter automatiquement selon l'environnement
   const hostname = window.location.hostname;
 
-  // En production (Vercel)
-  if (hostname === 'fontafo.vercel.app') {
+  // En production (Vercel et domaines personnalisés)
+  if (hostname === 'fontafo.vercel.app' ||
+      hostname === 'afosenegal.com' ||
+      hostname === 'www.afosenegal.com' ||
+      hostname === 'afosenegal.org' ||
+      hostname === 'www.afosenegal.org') {
     return 'https://backafo.onrender.com';
   }
 
